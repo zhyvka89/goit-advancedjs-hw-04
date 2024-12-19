@@ -27,7 +27,7 @@ export const createCard = ({
 };
 
 export const appendCards = (ulElem, cards) => {
-  ulElem.insertAdjacentHTML('afterbegin', cards);
+  ulElem.insertAdjacentHTML('beforeend', cards);
 };
 
 const loaderRef = document.querySelector('.loader');
@@ -38,4 +38,10 @@ export function showLoader() {
 
 export function hideLoader() {
   loaderRef.style.display = 'none';
+}
+
+export function scrollPage() {
+  const elem = document.querySelector(".image-item");
+  const rect = elem.getBoundingClientRect();
+  window.scrollBy({top: rect.width*2, behavior: 'smooth'});
 }

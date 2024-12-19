@@ -5,13 +5,25 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
 import getImages from './js/pixabay-api';
-import { createCard, appendCards, hideLoader } from './js/render-functions';
+import {
+  createCard,
+  appendCards,
+  hideLoader,
+  scrollPage,
+} from './js/render-functions';
 
 const formRef = document.querySelector('.search-form');
-const inputRef = document.querySelector('.search-input');
 const ulElemRef = document.querySelector('.images-list');
+const loadMoreBtnRef = document.querySelector('.load-more-btn');
+const infoTextRef = document.querySelector('.info');
+
+let page = 1;
+let query = '';
+const limit = 15;
+const totalPages = Math.ceil(500 / limit);
 
 formRef.addEventListener('submit', e => handleSubmit(e));
+loadMoreBtnRef.addEventListener('click', handleClick);
 
 function handleSubmit(e) {
   e.preventDefault();
@@ -26,16 +38,23 @@ function handleSubmit(e) {
     return;
   }
 
+  if (e.target.search.value.trim() !== query) {
+    page = 1;
+    loadMoreBtnRef.style.display = 'none';
+  }
+
   ulElemRef.innerHTML = '';
 
-  const query = e.target.search.value.trim().split(' ').join('+');
+  query = e.target.search.value.trim().split(' ').join('+');
 
-  getImages(query)
+  getImages(query, page, limit)
     .then(result => {
       if (result.hits.length) {
         const cards = result.hits.map(hit => createCard(hit)).join('');
         appendCards(ulElemRef, cards);
         gallery.refresh();
+        page++;
+        loadMoreBtnRef.style.display = 'block';
       } else {
         iziToast.show({
           title: 'Warning',
@@ -44,6 +63,34 @@ function handleSubmit(e) {
           position: 'topRight',
           color: 'yellow',
         });
+      }
+    })
+    .catch(error => {
+      iziToast.show({
+        title: 'Error',
+        message: 'Sorry, trouble happend. Please try again later!',
+        position: 'topRight',
+        color: 'red',
+      });
+    })
+    .finally(() => {
+      hideLoader();
+    });
+}
+
+function handleClick() {
+  getImages(query, page, limit)
+    .then(result => {
+      if (result.hits.length) {
+        const cards = result.hits.map(hit => createCard(hit)).join('');
+        appendCards(ulElemRef, cards);
+        gallery.refresh();
+        page++;
+        scrollPage();
+      }
+      if (page > totalPages) {
+        infoTextRef.style.display = 'block';
+        loadMoreBtnRef.style.display = 'none';
       }
     })
     .catch(error => {
