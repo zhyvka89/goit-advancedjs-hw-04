@@ -4,10 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vanilla App Template</title>
+    <title>Image Finder</title>
     <script type="module" crossorigin src="/goit-advancedjs-hw-04/index.js"></script>
   </head>
   <body>
-   
+    <div class="form-container">
+      <form class="search-form">
+        <input
+          class="search-input"
+          type="text"
+          name="search"
+          placeholder="Search image..."
+        />
+        <button class="search-btn" type="submit">Search</button>
+      </form>
+    </div>
+    <div class="list-container">
+      <span class="loader"></span>
+      <ul class="images-list"></ul>
+    </div>
   </body>
 </html>
