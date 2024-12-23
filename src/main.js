@@ -20,7 +20,6 @@ const infoTextRef = document.querySelector('.info');
 let page = 1;
 let query = '';
 const limit = 15;
-const totalPages = Math.ceil(500 / limit);
 
 formRef.addEventListener('submit', e => handleSubmit(e));
 loadMoreBtnRef.addEventListener('click', handleClick);
@@ -88,7 +87,7 @@ function handleClick() {
         page++;
         scrollPage();
       }
-      if (page > totalPages) {
+      if (page > getTotalPages(result.totalHits)) {
         infoTextRef.style.display = 'block';
         loadMoreBtnRef.style.display = 'none';
       }
@@ -104,6 +103,10 @@ function handleClick() {
     .finally(() => {
       hideLoader();
     });
+}
+
+function getTotalPages(totalHits) {
+  return Math.ceil(totalHits / limit);
 }
 
 let gallery = new SimpleLightbox('.card-link', {
